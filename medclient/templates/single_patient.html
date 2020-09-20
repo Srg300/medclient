@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}<div class="container"> Пациент</div> {% endblock title %}
+{% block content %}
+
+<div class="container">
+  <form class="form-horizontal" novalidate="">
+    {% csrf_token %}
+    <table class="table">
+      <thead>
+        <tr>
+          <!-- <th scope="col">ID</th> -->
+          <th scope="col">Имя</th>
+          <th scope="col">Фамилия</th>
+          <th scope="col">Телефон</th>
+          <th scope="col">Адрес</th>
+          <th scope="col">Диагноз</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          
+          <!-- <th scope="row"><input type="text" class="form-control" name="user" id="user" value={{patient.user}}></th> -->
+          <td><input type="text" class="form-control" name="first_name" id="first_name" value={{patient.first_name}}>
+          </td>
+          <td><input type="text" class="form-control" name="last_name" id="last_name" value={{patient.last_name}}></td>
+          <td><input type="text" class="form-control" name="phone" id="phone" value={{patient.phone}}></td>
+          <td><input type="text" class="form-control" name="address" id="address" value={{patient.address}}></td>
+          <td><input type="text" class="form-control" name="diagnosis" id="diagnosis" value={{patient.diagnosis}}></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="col-sm-2">
+      <select class="form-control" name="doctor" id="doctor">
+        {% for doctor in doctors %}
+        <option value="{{doctor.id}}" {% if patient.doctor.id == doctor.id %} selected="selected" {% endif %}>
+          {{doctor.first_name}} {{doctor.last_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <hr>
+    <button type="button" class="btn btn-primary" onclick="saveFunc()">Сохранить</button>
+    <button type="button" class="btn btn-danger" onclick="deleteFunc()">Удалить</button>
+  </form>
+
+  <div class="form-group">
+    <label for="exampleFormControlSelect2">Лекарства</label>
+    <!-- <select multiple class="form-control" id="exampleFormControlSelect2"> -->
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Лекарство</th>
+            <th scope="col">Дозировка мг.</th>
+            <th scope="col">Назначение</th>
+            <th scope="col">Когда пить</th>
+          </tr>
+        </thead>
+        {% for recepi in patient.recepi %}
+        <tbody>
+          <tr>
+            <th scope="row" id="recepi_id">{{recepi.id}}</th>
+            <td>{{recepi.pill.title}}</td>
+            <td>{{recepi.dose}}</td>
+            <td>{{recepi.title}}</td>
+            <td>{{recepi.desciprion}}</td>
+            <td><a href="{% url 'view_single_recepi' recepi.id %}" type="botton"
+                class="btn btn-primary">редактировать</a></td>
+            <td><button type="button" class="btn btn-danger" onclick="deleteFunc()">x</button></td></td>
+          </tr>
+        </tbody>
+        {% endfor %}
+        <form action="">
+        <tbody>
+          <tr>
+            <th scope="row">#</th>
+            <td>      <select class="form-control" name="add_pill" id="add_pill">
+              {% for pill in pills %}
+              <option value="{{pill.id}}">
+                {{pill.title}}</option>
+              {% endfor %}
+            </select></td>
+            <td><input type="text" class="form-control" name="add_dose" id="add_dose"></td>
+            <td><input type="text" class="form-control" name="add_title" id="add_title"></td>
+            <td><input type="text" class="form-control" name="add_desciprion" id="add_desciprion"></td>
+            <input type="text" class="form-control" name="add_owner" id="add_owner" value={{patient.id}} hidden>
+            <td><button type="button" class="btn btn-primary" onclick="addFunc()">Добавить</button></td>
+                        
+          </tr>
+        </tbody>
+      </form>
+      </table>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    function get_cookie(cookie_name) {
+      var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
+
+      if (results)
+        return (unescape(results[2]));
+      else
+        return null;
+    };
+
+    
+    function deleteFunc(){
+      var token = get_cookie("token");
+      var recepi_id = $('#recepi_id').val();
+      $.ajax({
+        type: "DELETE",
+        url: "http://127.0.0.1:8000/api/patient/update/{{patient.id}}",
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+
+          'Authorization': 'JWT ' + token,
+        },
+
+        success: function (data) {
+          alert('Удалено!');
+        }
+      });
+    
+    };
+
+    function addFunc(){
+      var pill = $('#add_pill').val();
+      var dose = $('#add_dose').val();
+      var title = $('#add_title').val();
+      var desciprion = $('#add_desciprion').val();
+      var owner = $('#add_owner').val();
+      var token = get_cookie("token");
+
+      $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:8000/api/recepi/create/",
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+
+          'Authorization': 'JWT ' + token,
+        },
+        data: JSON.stringify({
+          pill: pill,
+          title: title,
+          dose: dose,
+          desciprion: desciprion,
+          owner: owner,
+        }),
+        
+
+        success: function (data) {
+          alert('Добавлено!');
+        }
+      });
+    
+    };
+
+
+    function saveFunc() {
+     // var username = $('#user').val();
+      var first_name = $('#first_name').val();
+      var last_name = $('#last_name').val();
+      var address = $('#address').val();
+      var phone = $('#phone').val();
+      var diagnosis = $('#diagnosis').val();
+      var doctor = $('#doctor').val();
+      var token = get_cookie("token");
+      //var csrftoken = get_cookie("csrftoken");
+
+      $.ajax({
+        type: "put",
+        url: "http://127.0.0.1:8000/api/patient/update/{{patient.id}}",
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+
+          'Authorization': 'JWT ' + token,
+        },
+        data: JSON.stringify({
+          first_name: first_name,
+          last_name: last_name,
+          address: address,
+          phone: phone,
+          diagnosis: diagnosis,
+          doctor: doctor,
+        }),
+
+        success: function (data) {
+          console.log(data);
+        }
+      });
+    };
+  </script>
+
+  {% endblock content %}

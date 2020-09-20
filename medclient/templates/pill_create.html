@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% load static %} {% block title %}
+<div class="container"></div>
+{% endblock title %} {% block content %}
+
+<div class="container">
+  <h3>Добавление лекарства в базу</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Название</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          <input type="text" class="form-control" name="title" id="title" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" class="btn btn-primary" onclick="saveFunc()">
+    Сохранить
+  </button>
+
+  <script type="text/javascript">
+    function get_cookie(cookie_name) {
+      var results = document.cookie.match(
+        "(^|;) ?" + cookie_name + "=([^;]*)(;|$)"
+      );
+
+      if (results) return unescape(results[2]);
+      else return null;
+    }
+
+    function saveFunc() {
+      var title = $("#title").val();
+      var token = get_cookie("token");
+      var csrftoken = get_cookie("csrftoken");
+
+      $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:8000/api/pill/create/",
+        contentType: "application/json",
+        dataType: "json",
+        headers: {
+          Authorization: "JWT " + token,
+        },
+        data: JSON.stringify({
+          title: title,
+        }),
+
+        success: function (data) {
+          alert("Сохранено");
+        },
+      });
+    }
+  </script>
+
+  {% endblock content %}
+</div>

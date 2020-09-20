@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}<div class="container"> Список докторов</div> {% endblock title %}
+
+{% block content %}
+
+
+<div class="container">
+
+  <div class="form-group">
+    <label for="exampleFormControlSelect2">Доктора</label>
+    <!-- <select multiple class="form-control" id="exampleFormControlSelect2"> -->
+      <hr>
+    <div>
+      <a href="{% url 'view_add_doctor' %}" type="botton" class="btn btn-primary">Добавить доктора</a>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Имя </th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">Специализация</th>
+            <th scope="col">Телефон</th>
+          </tr>
+        </thead>
+        {% for doctor in doctors %}
+        <tbody>
+          <tr>
+            <th scope="row">{{doctor.id}}</th>
+            <td>{{doctor.user}}</td>
+            <td>{{doctor.first_name}}</td>
+            <td>{{doctor.last_name}}</td>
+            <td>{{doctor.specialization}}</td>
+            <td>{{doctor.phone}}</td>
+            <td><a href="{% url 'view_single_doctor' doctor.id  %}" type="botton" class="btn btn-primary">Редактировать</a> </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+    <!-- </select> -->
+  </div>
+</div>
+
+{% endblock content %}
+
+{% for doctor in doctors %}
+<form>
+  <div class="form-group">
+    <label for="exampleFormControlInput1">Username</label>
+    <input id="Username" type="text" class="form-control"  value={{doctor.user}}>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlInput1">Имя</label>
+    <input type="text" class="form-control" id="first_name" value={{doctor.first_name}}>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlInput1">Фамилия</label>
+    <input type="text" class="form-control" id="last_name" value={{doctor.last_name}}>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlInput1">Специализация</label>
+    <input type="" class="form-control" id="specialization" value={{doctor.specialization}}>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlInput1">Телефон</label>
+    <input type="text" class="form-control" id="phone" value={{doctor.phone}}>
+  </div>
+  <a href="{% url 'view_single_doctor' doctor.id  %}" type="botton" class="btn btn-primary">Редактировать</a>  
+
+</form>
+
+<script type="text/javascript">
+  function get_cookie(cookie_name)
+  {
+    var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)' );
+   
+    if (results)
+      return (unescape(results[2]));
+    else
+      return null;
+  }
+
+  function deleteFunc() {
+    var token = get_cookie('token')
+      $.ajax({
+        type:"DELETE",
+        url: "http://127.0.0.1:8000/api/doctor/{{recepi.id}}",
+        contentType: 'application/json',
+        dataType:'json',
+        headers: {
+          'Authorization': 'JWT '+ token},
+
+        success: function(data) {
+           console.log(data);
+           alert('Удалено!')
+    }
+  });
+};
+</script>
+
+{% endfor %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<div class="container"> </div> {% endblock title %}
+
+{% block content %}
+
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Ошибка. У вас нет доступа.</h4>
+  <p>Вы не правильно ввели пароль или у вас нет доступа.</p>
+  <hr>
+  <p class="mb-0"><a type="button" class="btn btn-primary" href="{% url 'index' %}">Назад</a></p>
+</div>
+
+{% endblock content %}

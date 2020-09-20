@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}<div class="container"> Пациент</div> {% endblock title %}
+{% block content %}
+
+  {{patient}}
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Лекарство</th>
+            <th scope="col">Дозировка мг.</th>
+            <th scope="col">Назначение</th>
+            <th scope="col">Когда пить</th>
+          </tr>
+        </thead>
+        
+        {% for recepi in recepis %}
+        <tbody>
+          <tr>
+            <th scope="row">{{recepi.id}}</th>
+            <td>{{recepi.pill.title}}</td>
+            <td>{{recepi.dose}}</td>
+            <td>{{recepi.title}}</td>
+            <td>{{recepi.desciprion}}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+        
+      </table>
+    </div>
+
+  {% endblock content %}

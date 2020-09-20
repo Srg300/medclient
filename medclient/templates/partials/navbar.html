@@ -1,0 +1,54 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+    <a class="navbar-brand" href="{% url 'index' %}">Главная</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+
+            {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_doctors_list' %}">Доктора</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_add_admin' %}">Новый администратор</a>
+                </li>
+            {% endif %}
+
+            {% if user.is_staff  or user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_pacients_list' %}">Пациенты</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_pills_list' %}">Список лекарств</a>
+                </li>
+            {% endif %}
+
+            {% if user.username %}
+            {% if user.is_staff == False and user.is_superuser == False %}
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_recepi_patient' %}">Рецепты</a>
+            </li>
+            {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">logout</a>
+                </li>
+                
+                    
+
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+            {% endif %}
+
+            <li>
+                <a class="nav-link">{{user.username}}</a>
+            </li>
+        </ul>
+    </div>
+</nav>

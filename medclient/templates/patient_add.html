@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}<div class="container"> Добавить пациента</div> {% endblock title %}
+{% block content %}
+<br>
+<div class="container">
+  <form class="form-horizontal" novalidate="">
+    {% csrf_token %}
+    <div class="col-sm-10">
+      <p class="font-weight-bold">Лечащий врач</p>
+      <hr>
+      <!-- <p>{{doctor.first_name}} {{doctor.last_name}}</p>
+      <input type="text" class="form-control" name="doctor" id="doctor" value={{doctor.id}} hidden> -->
+        
+      <div class="col-sm-4" >
+        <select class="form-control" name="doctor" id="doctor">
+          {% for doctor in doctors %}
+          <option value="{{doctor.id}}" >
+            {{doctor.first_name}} {{doctor.last_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Имя</th>
+          <th scope="col">Фамилия</th>
+          <th scope="col">Телефон</th>
+          <th scope="col">Адрес</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" class="form-control" name="first_name" id="first_name" ></td>
+          <td><input type="text" class="form-control" name="last_name" id="last_name" ></td>
+          <td><input type="text" class="form-control" name="phone" id="phone" ></td>
+          <td><input type="text" class="form-control" name="address" id="address" ></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" class="form-control" name="username" id="username" ></td>
+          <td><input type="password" class="form-control" name="password" id="password" ></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <button type="button" class="btn btn-primary" onclick="saveFunc()">Добавить</button>
+  </form>
+  </div>
+
+  <script type="text/javascript">
+
+    function get_cookie(cookie_name) {
+      var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
+
+      if (results)
+        return (unescape(results[2]));
+      else
+        return null;
+    }
+
+    function saveFunc() {
+      var first_name = $('#first_name').val();
+      var last_name = $('#last_name').val();
+      var address = $('#address').val();
+      var phone = $('#phone').val();
+      var doctor = $('#doctor').val();
+
+      var username = $('#username').val();
+      var password = $('#password').val();
+
+      var token = get_cookie("token");
+      var csrftoken = get_cookie("csrftoken");
+
+      // var token = JSON.parse(sessionStorage.getItem('accessToken'))
+      // var access_token = token.access
+      $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:8000/api/patient/create/",
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+
+          'Authorization': 'JWT ' + token,
+        },
+        data: JSON.stringify({
+          first_name: first_name,
+          last_name: last_name,
+          address: address,
+          phone: phone,
+          doctor: doctor,
+          user:{
+            username: username,
+            password: password
+          }
+        }),
+
+        success: function (data) {
+          alert('Добавлен!');
+        }
+        
+        
+      });
+    };
+  </script>
+
+  {% endblock content %}

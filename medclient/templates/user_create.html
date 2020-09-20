@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}<div class="container">Администратор</div> {% endblock title %}
+
+{% block content %}
+
+
+<div class="container">
+
+<form>
+  {% csrf_token %}
+  <div class="form-group">
+
+
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Email</th>
+        <th scope="col">Username</th>
+        <th scope="col">Password</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" class="form-control" name="email" id="email" ></td>
+        <td><input type="text" class="form-control" name="username" id="username" ></td>
+        <td><input type="password" class="form-control" name="password" id="password" ></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button type="button" class="btn btn-primary" onclick="saveFunc()">Сохранить</button>
+
+</form>
+
+</div>
+
+<script type="text/javascript">
+  function get_cookie(cookie_name)
+      {
+        var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)' );
+      
+        if (results)
+          return (unescape(results[2]));
+        else
+          return null;
+      }
+
+  function saveFunc() {
+
+      var email = $('#email').val();
+      
+      var username = $('#username').val();
+      var password = $('#password').val();
+
+      var token = get_cookie('token')
+      $.ajax({
+        type:"POST",
+        url: "http://127.0.0.1:8000/api/superuser/create/",
+        contentType: 'application/json',
+        dataType:'json',
+        headers: {
+          'Authorization': 'JWT '+ token},
+        data: JSON.stringify({
+          email: email,
+          username: username,
+          password: password     
+        }),        
+        
+        success: function(data) {
+           alert('Новый админ, успешно добавлен в базу.');
+    }
+  });
+};
+
+</script>
+
+{% endblock content %}

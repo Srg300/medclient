@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}<div class="container"> Список лекарств</div> {% endblock title %}
+
+{% block content %}
+
+
+<div class="container">
+  <h3> Список лекарств</h3> 
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Номер</th>
+      <th scope="col">Название</th>
+      
+    </tr>
+  </thead>
+  {% for pill in pills %}
+  <tbody>
+    <tr>
+      <td>{{pill.id}}</td>
+      <td>{{pill.title}} </td>
+
+    </tr>
+
+  </tbody>
+  {% endfor %}
+</table>
+
+<a href="{% url 'view_pill_create' %}" type="button" class="btn btn-primary">Добавить лекарство</a>
+
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}<div class="container"> Список пациентов</div> {% endblock title %}
+
+{% block content %}
+<div class="container">
+<h3> Пациенты</h3> 
+<a href="{% url 'view_add_patient' %}" type="botton" class="btn btn-primary">Добавить пациента</a>
+
+<hr>
+
+{% for patient in patients %}
+
+
+  <ul class="list-group">
+    <li class="list-group-item"><a href="{% url 'view_single_pacient' patient.id %}"> {{patient.id}}: {{patient.first_name}} {{patient.last_name}}</li>
+  </ul>
+
+{% endfor %}
+</div>
+
+
+
+{% endblock content %}
